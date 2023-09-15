@@ -1,0 +1,33 @@
+#cloud-config
+hostname: test-29
+fqdn: test-29.internal.iv.link
+prefer_fqdn_over_hostname: true
+
+write_files:
+  - content: |
+      #!/usr/bin/env bash
+
+      echo "Setting passwordless sudo..."
+      sed -E -i 's/%sudo\s+ALL=\(ALL:ALL\) *ALL/%sudo ALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
+      echo "Setting passwordless sudo... Done!"
+    path: "/var/lib/cloud/scripts/per-once/01-set_passwordless_sudo.bash"
+    owner: "root:root"
+    permissions: "0540"
+  - content: |
+      #!/usr/bin/env bash
+
+      echo "Dropping password for root..."
+      passwd --delete root
+      echo "Dropping password for root... Done!"
+    path: "/var/lib/cloud/scripts/per-once/02-drop_root_password.bash"
+    owner: "root:root"
+    permissions: "0540"
+
+users:
+  - name: ansible
+    gecos: Ansible User
+    groups: sudo
+    lock_passwd: true
+    shell: "/bin/bash"
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILqh6eSr/d2hZuAW7gO2q8B77Y7H9uBRcS5Ry3qEkxUN ansible-control.internal.iv.link"
