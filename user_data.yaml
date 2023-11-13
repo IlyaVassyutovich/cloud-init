@@ -3,6 +3,8 @@ hostname: test-29
 fqdn: test-29.internal.iv.link
 prefer_fqdn_over_hostname: true
 
+timezone: "Europe/Moscow"
+
 write_files:
   - content: |
       #!/usr/bin/env bash
